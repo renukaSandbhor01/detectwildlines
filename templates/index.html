@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Upload — WildLens{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <p class="eyebrow">Field Identification</p>
+    <h1>Point your lens.<br>Let the model name it.</h1>
+    <p class="hero-sub">Upload a photograph of an animal. WildLens reads the image and
+        returns its best guess at a species, ranked by confidence — like a specimen tag
+        pinned to your photo.</p>
+</section>
+
+<section class="workbench">
+
+    <form class="dropzone-form" action="{{ url_for('predict') }}" method="POST" enctype="multipart/form-data">
+        <label class="dropzone" for="image-input">
+            <input type="file" id="image-input" name="image" accept=".png,.jpg,.jpeg" required
+                   onchange="document.getElementById('file-chosen').textContent = this.files[0]?.name || 'No file chosen'">
+            <span class="dropzone-icon">&#9670;</span>
+            <span class="dropzone-label">Drop a photo, or click to browse</span>
+            <span class="dropzone-file" id="file-chosen">No file chosen</span>
+        </label>
+
+        <div class="camera-toggle">
+            <button type="button" id="camera-btn" class="btn-secondary">Use Camera Instead</button>
+        </div>
+
+        <div class="camera-panel" id="camera-panel" style="display:none;">
+            <video id="camera-stream" autoplay playsinline></video>
+            <button type="button" id="capture-btn" class="btn-secondary">Capture Photo</button>
+        </div>
+        <canvas id="camera-canvas" style="display:none;"></canvas>
+
+        <button type="submit" class="btn-primary">Identify Specimen</button>
+    </form>
+
+    <script>
+        const cameraBtn = document.getElementById('camera-btn');
+        const cameraPanel = document.getElementById('camera-panel');
+        const video = document.getElementById('camera-stream');
+        const captureBtn = document.getElementById('capture-btn');
+        const canvas = document.getElementById('camera-canvas');
+        const fileInput = document.getElementById('image-input');
+        const fileChosenLabel = document.getElementById('file-chosen');
+        let activeStream = null;
+
+        cameraBtn.addEventListener('click', async () => {
+            const isOpen = cameraPanel.style.display !== 'none';
+            if (isOpen) {
+                stopCamera();
+                return;
+            }
+            try {
+                activeStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }
+                });
+                video.srcObject = activeStream;
+                cameraPanel.style.display = 'flex';
+                cameraBtn.textContent = 'Cancel Camera';
+            } catch (err) {
+                alert('Could not access the camera: ' + err.message +
+                      '\n(Camera access only works on localhost or HTTPS.)');
+            }
+        });
+
+        captureBtn.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            canvas.toBlob((blob) => {
+                const file = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+                fileChosenLabel.textContent = file.name + ' (from camera)';
+                stopCamera();
+            }, 'image/jpeg', 0.92);
+        });
+
+        function stopCamera() {
+            if (activeStream) {
+                activeStream.getTracks().forEach(track => track.stop());
+                activeStream = null;
+            }
+            cameraPanel.style.display = 'none';
+            cameraBtn.textContent = 'Use Camera Instead';
+        }
+    </script>
+
+    {% if results %}
+    <article class="specimen-card">
+        <div class="specimen-photo">
+            <img src="{{ image_url }}" alt="Uploaded specimen photo">
+        </div>
+        <div class="specimen-details">
+            <p class="specimen-tag-label">Specimen No. {{ range(1000,9999) | random }}</p>
+            <h2 class="specimen-name">{{ results[0].label }}</h2>
+
+            <div class="confidence-dial" style="--pct: {{ results[0].confidence }}">
+                <span class="confidence-number">{{ results[0].confidence }}%</span>
+                <span class="confidence-caption">confidence</span>
+            </div>
+
+            <p class="specimen-section-label">Other possibilities</p>
+            <ul class="alt-list">
+                {% for r in results[1:] %}
+                <li><span>{{ r.label }}</span><span class="mono">{{ r.confidence }}%</span></li>
+                {% endfor %}
+            </ul>
+
+            {% if species_info %}
+            <div class="field-notes">
+                <p class="specimen-section-label">Field notes — {{ species_info.title }}</p>
+                <p class="field-notes-text">{{ species_info.extract }}</p>
+                <a href="{{ species_info.url }}" target="_blank" rel="noopener" class="field-notes-link">
+                    Read more on Wikipedia &rarr;
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </article>
+    {% endif %}
+
+</section>
+{% endblock %}

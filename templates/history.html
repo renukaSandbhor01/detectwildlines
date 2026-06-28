@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Field Log — WildLens{% endblock %}
+
+{% block content %}
+<section class="hero hero-compact">
+    <p class="eyebrow">Your Records</p>
+    <h1>Field Log</h1>
+</section>
+
+<section class="log-list">
+    {% if records %}
+        {% for r in records %}
+        <div class="log-entry">
+            <img src="{{ url_for('static', filename='uploads/' + r.image_filename) }}" alt="{{ r.predicted_label }}">
+            <div class="log-entry-text">
+                <h3>{{ r.predicted_label }}</h3>
+                <p class="mono">{{ r.confidence }}% confidence</p>
+                <p class="log-date">{{ r.created_at }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty-state">No entries yet. Identify your first specimen to start your log.</p>
+    {% endif %}
+</section>
+{% endblock %}

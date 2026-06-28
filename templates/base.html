@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}WildLens{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <a href="{{ url_for('index') if session.get('user_id') else url_for('login') }}" class="brand">
+        <span class="brand-mark">&#x2055;</span> WildLens
+    </a>
+    {% if session.get('user_id') %}
+    <nav class="topnav">
+        <span class="nav-greeting">Observer: {{ session.get('username') }}</span>
+        <a href="{{ url_for('index') }}">Upload</a>
+        <a href="{{ url_for('history') }}">Field Log</a>
+        <a href="{{ url_for('logout') }}">Log out</a>
+    </nav>
+    {% endif %}
+</header>
+
+<main class="page">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-stack">
+            {% for message in messages %}
+                <div class="flash-note">{{ message }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <span>WildLens — a field guide powered by a vision model, not a naturalist.</span>
+</footer>
+
+</body>
+</html>

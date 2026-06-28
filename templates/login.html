@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Log in — WildLens{% endblock %}
+
+{% block content %}
+<section class="auth-panel">
+    <p class="eyebrow">Welcome back</p>
+    <h1 class="auth-heading">Sign in to your field log</h1>
+
+    <form method="POST" class="auth-form">
+        <label>Username
+            <input type="text" name="username" required autofocus>
+        </label>
+        <label>Password
+            <input type="password" name="password" required>
+        </label>
+        <button type="submit" class="btn-primary">Log in</button>
+    </form>
+
+    <p class="auth-switch">New here? <a href="{{ url_for('signup') }}">Create an account</a></p>
+</section>
+{% endblock %}
