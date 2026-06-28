@@ -1,6 +1,6 @@
 Flask==3.0.3
 mysql-connector-python==8.4.0
-tensorflow>=2.16
+tensorflow == 2.21.0
 opencv-python==4.10.0.84
 numpy>=1.26
 Werkzeug==3.0.3
