@@ -15,13 +15,16 @@ import uuid
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 
 import db
 from model_utils import predict_image
 from species_info import get_species_info
 
+load_dotenv()  # reads your local .env file into environment variables
+
 app = Flask(__name__)
-app.secret_key = "change-this-to-something-random-and-secret"
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-to-something-random-and-secret")
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "static", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
