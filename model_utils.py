@@ -1,10 +1,4 @@
-"""
-model_utils.py — The ML core of WildLens.
 
-Uses a pretrained MobileNetV2 (trained on ImageNet, 1000 classes, many of
-them animals) so there's no need to collect/train on your own dataset.
-OpenCV handles reading and resizing the image before it goes to the model.
-"""
 
 import cv2
 import numpy as np
