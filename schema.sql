@@ -1,6 +1,3 @@
--- WildLens database schema
--- Run this once in MySQL before starting the app:
---   mysql -u root -p < schema.sql
 
 CREATE DATABASE IF NOT EXISTS wildlens;
 USE wildlens;
