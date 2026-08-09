@@ -1,13 +1,3 @@
-"""
-species_info.py — Looks up real-world information about a predicted species.
-
-Uses Wikipedia's public REST API (no API key, no signup needed).
-Two steps:
-  1. Search for the closest matching Wikipedia article title for the
-     model's label (e.g. "Cock" -> "Rooster"), since ImageNet labels
-     don't always exactly match an article title.
-  2. Fetch a short summary + link for that article.
-"""
 
 import requests
 
