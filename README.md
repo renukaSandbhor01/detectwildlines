@@ -86,14 +86,4 @@ wildlens/
     └── uploads/           # Uploaded photos are saved here
 ```
 
-## Ideas to extend this for your resume
-- Add a "delete entry" button on the Field Log page (more DELETE practice)
-- Show a bar chart of "most identified animals" using matplotlib or Chart.js
-- Deploy it on the AWS EC2 instance you already set up, with RDS instead of local MySQL
-- Swap MobileNetV2 for a model you fine-tune yourself on a small animal dataset (next-level version)
-- Add an admin view that lists all users' predictions (good Django comparison exercise later)
 
-## What to say about it on your resume / LinkedIn
-> "Built WildLens, a full-stack image classification web app (Flask, TensorFlow,
-> OpenCV, MySQL) with user authentication and a personal prediction history,
-> deployed to AWS EC2."
